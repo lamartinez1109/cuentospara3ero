@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Baúl de los Cuentos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --crema: #fdf6e3;
+    --crema-oscuro: #f5e6c3;
+    --marron: #6b3a1f;
+    --marron-claro: #9b6040;
+    --dorado: #c8922a;
+    --dorado-claro: #e8b84b;
+    --texto: #3a2010;
+    --texto-suave: #6b4c30;
+    --borde: #d4a96a;
+    --sombra: rgba(107, 58, 31, 0.15);
+    --sidebar-w: 280px;
+    --header-h: 80px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background-color: var(--crema);
+    font-family: 'Lora', Georgia, serif;
+    color: var(--texto);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  header {
+    height: var(--header-h);
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #4a1e0a 0%, var(--marron) 60%, #8b4513 100%);
+    color: var(--crema-oscuro);
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    gap: 1rem;
+    border-bottom: 3px solid var(--dorado);
+    position: relative;
+    overflow: hidden;
+    z-index: 50;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8922a' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .header-ornamento {
+    font-size: 1.4rem;
+    color: var(--dorado-claro);
+    letter-spacing: 0.3rem;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .header-titulo {
+    position: relative;
+    flex: 1;
+  }
+
+  .header-titulo h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.3rem, 3vw, 2rem);
+    font-weight: 700;
+    color: var(--dorado-claro);
+    text-shadow: 1px 2px 4px rgba(0,0,0,0.4);
+    line-height: 1.1;
+  }
+
+  .header-titulo p {
+    font-size: 0.78rem;
+    font-style: italic;
+    color: #e8d5b5;
+    margin-top: 0.2rem;
+  }
+
+  /* Hamburger for mobile */
+  .btn-menu {
+    display: none;
+    background: none;
+    border: 1px solid rgba(232,184,75,0.4);
+    border-radius: 6px;
+    color: var(--dorado-claro);
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 0.3rem 0.6rem;
+    flex-shrink: 0;
+    transition: background 0.2s;
+    z-index: 1;
+  }
+  .btn-menu:hover { background: rgba(200,146,42,0.2); }
+
+  /* ── LAYOUT ── */
+  .app-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    background: linear-gradient(180deg, #3d1e09 0%, #5a2e10 100%);
+    border-right: 2px solid var(--dorado);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar-inner {
+    overflow-y: auto;
+    flex: 1;
+    padding: 0.8rem 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--dorado) transparent;
+  }
+
+  .sidebar-inner::-webkit-scrollbar { width: 4px; }
+  .sidebar-inner::-webkit-scrollbar-thumb { background: var(--dorado); border-radius: 2px; }
+
+  .sidebar-section-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--dorado);
+    opacity: 0.6;
+    padding: 0.8rem 1.2rem 0.3rem;
+    font-family: 'Lora', serif;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.65rem 1.2rem;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.18s;
+    text-decoration: none;
+    color: #d4b896;
+    font-size: 0.88rem;
+    font-family: 'Lora', serif;
+    position: relative;
+  }
+
+  .nav-item:hover {
+    background: rgba(200,146,42,0.12);
+    color: var(--dorado-claro);
+    border-left-color: rgba(200,146,42,0.4);
+  }
+
+  .nav-item.active {
+    background: rgba(200,146,42,0.18);
+    color: var(--dorado-claro);
+    border-left-color: var(--dorado-claro);
+    font-weight: 600;
+  }
+
+  .nav-emoji {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    width: 1.4rem;
+    text-align: center;
+  }
+
+  .nav-label {
+    flex: 1;
+    line-height: 1.3;
+  }
+
+  .nav-autor {
+    font-size: 0.62rem;
+    color: var(--dorado);
+    opacity: 0.7;
+    display: block;
+    font-style: italic;
+    margin-top: 0.1rem;
+  }
+
+  .sidebar-footer {
+    border-top: 1px solid rgba(200,146,42,0.2);
+    padding: 0.8rem 1.2rem;
+    font-size: 0.7rem;
+    font-style: italic;
+    color: #a07850;
+    text-align: center;
+  }
+
+  /* ── PANEL DERECHO ── */
+  .panel {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--crema);
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(200,146,42,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(200,146,42,0.05) 0%, transparent 60%);
+    scrollbar-width: thin;
+    scrollbar-color: var(--borde) transparent;
+    position: relative;
+  }
+
+  .panel::-webkit-scrollbar { width: 6px; }
+  .panel::-webkit-scrollbar-thumb { background: var(--borde); border-radius: 3px; }
+
+  /* Pantalla de bienvenida */
+  .bienvenida {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    padding: 3rem 2rem;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .bienvenida-ornamento {
+    font-size: 4rem;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 4px 8px rgba(107,58,31,0.2));
+  }
+
+  .bienvenida h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    color: var(--marron);
+    margin-bottom: 0.8rem;
+  }
+
+  .bienvenida p {
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--texto-suave);
+    max-width: 500px;
+    line-height: 1.8;
+  }
+
+  .bienvenida .mini-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    justify-content: center;
+    max-width: 480px;
+  }
+
+  .bienvenida .mini-chip {
+    background: var(--crema-oscuro);
+    border: 1px solid var(--borde);
+    border-radius: 20px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+    color: var(--marron-claro);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .bienvenida .mini-chip:hover {
+    background: var(--dorado);
+    color: var(--marron);
+    border-color: var(--dorado);
+  }
+
+  /* Cuento desplegado */
+  .cuento-view {
+    display: none;
+    padding: 2rem 2.5rem 4rem;
+    max-width: 860px;
+    margin: 0 auto;
+    animation: fadeIn 0.35s ease;
+  }
+
+  .cuento-view.visible {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Encabezado del cuento en el panel */
+  .cuento-hero {
+    display: flex;
+    align-items: stretch;
+    background: linear-gradient(to right, #f9f0d8, #fdf6e3);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px var(--sombra);
+    min-height: 180px;
+  }
+
+  .cuento-hero-imagen {
+    width: 170px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5e6c3 0%, #ecdba0 100%);
+    border-right: 2px solid var(--borde);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cuento-hero-imagen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(200,146,42,0.12) 0%, transparent 70%);
+  }
+
+  .emoji-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 1;
+    padding: 1rem;
+  }
+
+  .emoji-grande { font-size: 3.8rem; line-height: 1; }
+  .emoji-sec { display: flex; gap: 0.4rem; font-size: 1.4rem; }
+
+  .cuento-hero-info {
+    flex: 1;
+    padding: 1.4rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .etiqueta-autor {
+    display: inline-block;
+    background: var(--dorado);
+    color: var(--marron);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.18rem 0.65rem;
+    border-radius: 20px;
+    margin-bottom: 0.6rem;
+    font-family: 'Lora', serif;
+    width: fit-content;
+  }
+
+  .cuento-hero-info h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    color: var(--marron);
+    line-height: 1.15;
+    margin-bottom: 0.5rem;
+  }
+
+  .mini-descripcion {
+    color: var(--texto-suave);
+    font-size: 0.88rem;
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* Cuerpo del cuento */
+  .cuento-cuerpo {
+    background: #fff9ee;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    padding: 1.8rem 2.2rem 2.2rem;
+    box-shadow: 0 2px 10px var(--sombra);
+  }
+
+  .cuento-cuerpo p {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--texto);
+    margin-bottom: 1rem;
+  }
+
+  .cuento-cuerpo p:last-child { margin-bottom: 0; }
+
+  .letra-capital::first-letter {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 3.2rem;
+    font-weight: 700;
+    color: var(--dorado);
+    float: left;
+    line-height: 0.85;
+    margin-right: 0.1em;
+    margin-top: 0.1em;
+  }
+
+  .moraleja {
+    background: linear-gradient(to right, #f5ead0, #fdf6e3);
+    border-left: 4px solid var(--dorado);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.4rem;
+    margin-top: 1.4rem;
+    font-style: italic;
+    color: var(--marron-claro);
+    font-size: 0.97rem;
+    line-height: 1.7;
+  }
+
+  .moraleja strong {
+    display: block;
+    font-style: normal;
+    color: var(--marron);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3rem;
+  }
+
+  .personajes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.2rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--borde);
+  }
+
+  .personaje-tag {
+    background: var(--crema-oscuro);
+    border: 1px solid var(--borde);
+    color: var(--marron-claro);
+    font-size: 0.78rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    font-style: italic;
+  }
+
+  /* Nav prev/next */
+  .cuento-nav-btns {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.8rem;
+    gap: 1rem;
+  }
+
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: var(--marron);
+    color: var(--crema-oscuro);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Lora', serif;
+    font-size: 0.82rem;
+    transition: background 0.2s, transform 0.1s;
+    text-align: center;
+    max-width: 48%;
+  }
+
+  .nav-btn:hover { background: var(--marron-claro); transform: translateY(-1px); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; transform: none; }
+  .nav-btn.next { margin-left: auto; }
+
+  /* ── OVERLAY (mobile) ── */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 40;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    :root { --sidebar-w: 270px; }
+
+    .btn-menu { display: flex; }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      z-index: 60;
+      transform: translateX(-100%);
+    }
+
+    .sidebar.open { transform: translateX(0); }
+    .overlay.open { display: block; }
+
+    .cuento-view { padding: 1.2rem 1rem 3rem; }
+
+    .cuento-hero { flex-direction: column; min-height: auto; }
+
+    .cuento-hero-imagen {
+      width: 100%;
+      height: 120px;
+      border-right: none;
+      border-bottom: 2px solid var(--borde);
+    }
+
+    .cuento-cuerpo { padding: 1.2rem 1rem; }
+
+    .cuento-nav-btns { flex-direction: column; }
+    .nav-btn { max-width: 100%; }
+    .nav-btn.next { margin-left: 0; }
+  }
+
+  /* ── STORY IMAGES ── */
+  .cuento-imagenes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin: 1.4rem 0;
+  }
+
+  .cuento-imagenes img {
+    width: 100%;
+    border-radius: 10px;
+    border: 2px solid var(--borde);
+    box-shadow: 0 3px 12px var(--sombra);
+    object-fit: cover;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: zoom-in;
+  }
+
+  .cuento-imagenes img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px var(--sombra);
+  }
+
+  .cuento-imagen-single {
+    margin: 1.4rem 0;
+  }
+
+  .cuento-imagen-single img {
+    width: 100%;
+    border-radius: 10px;
+    border: 2px solid var(--borde);
+    box-shadow: 0 3px 12px var(--sombra);
+  }
+
+  /* Lightbox */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    max-width: 92vw;
+    max-height: 90vh;
+    border-radius: 10px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <button class="btn-menu" id="btnMenu" aria-label="Abrir menú">☰</button>
+  <span class="header-ornamento">📖</span>
+  <div class="header-titulo">
+    <h1>El Baúl de los Cuentos</h1>
+    <p>Cuentos clásicos para 3.° grado</p>
+  </div>
+</header>
+
+<!-- OVERLAY MOBILE -->
+<div class="overlay" id="overlay"></div>
+
+<!-- APP BODY -->
+<div class="app-body">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-inner">
+      <span class="sidebar-section-label">✦ Charles Perrault</span>
+
+      <div class="nav-item" data-id="cenicienta">
+        <span class="nav-emoji">👠</span>
+        <div class="nav-label">La Cenicienta
+          <span class="nav-autor">Perrault</span>
+        </div>
+      </div>
+      <div class="nav-item" data-id="gato-botas">
+        <span class="nav-emoji">🥾</span>
+        <div class="nav-label">El Gato con Botas
+          <span class="nav-autor">Perrault</span>
+        </div>
+      </div>
+      <div class="nav-item" data-id="pulgarcito">
+        <span class="nav-emoji">🌿</span>
+        <div class="nav-label">Pulgarcito
+          <span class="nav-autor">Perrault</span>
+        </div>
+      </div>
+      <div class="nav-item" data-id="barba-azul">
+        <span class="nav-emoji">🔑</span>
+        <div class="nav-label">Barba Azul
+          <span class="nav-autor">Perrault</span>
+        </div>
+      </div>
+
+      <span class="sidebar-section-label" style="margin-top:0.5rem;">✦ Hermanos Grimm</span>
+
+      <div class="nav-item" data-id="blancanieves">
+        <span class="nav-emoji">👸</span>
+        <div class="nav-label">Blancanieves
+          <span class="nav-autor">Hermanos Grimm</span>
+        </div>
+      </div>
+      <div class="nav-item" data-id="bella-durmiente">
+        <span class="nav-emoji">🌹</span>
+        <div class="nav-label">La Bella Durmiente
+          <span class="nav-autor">Hermanos Grimm</span>
+        </div>
+      </div>
+      <div class="nav-item" data-id="hansel-gretel">
+        <span class="nav-emoji">🍬</span>
+        <div class="nav-label">Hansel y Gretel
+          <span class="nav-autor">Hermanos Grimm</span>
+        </div>
+      </div>
+      <div class="nav-item" data-id="caperucita-grimm">
+        <span class="nav-emoji">🌲</span>
+        <div class="nav-label">Caperucita Roja
+          <span class="nav-autor">Hermanos Grimm</span>
+        </div>
+      </div>
+
+      <span class="sidebar-section-label" style="margin-top:0.5rem;">✦ Hans Christian Andersen</span>
+
+      <div class="nav-item" data-id="patito-feo">
+        <span class="nav-emoji">🦆</span>
+        <div class="nav-label">El Patito Feo
+          <span class="nav-autor">H. C. Andersen</span>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-footer">10 cuentos · Adaptados para 3.° grado</div>
+  </nav>
+
+  <!-- PANEL DERECHO -->
+  <main class="panel" id="panel">
+
+    <!-- Pantalla de bienvenida -->
+    <div class="bienvenida" id="bienvenida">
+      <div class="bienvenida-ornamento">📚</div>
+      <h2>El Baúl de los Cuentos</h2>
+      <p>Abrí el baúl y encontrarás diez historias mágicas llenas de aventuras, valentía y mucho corazón. Elegí un cuento del menú para comenzar a leer.</p>
+      <div class="mini-grid" id="miniGrid"></div>
+    </div>
+
+    <!-- Vistas de cada cuento (se crean con JS) -->
+    <div id="cuentosContainer"></div>
+
+  </main>
+</div>
+
+<script>
+const CUENTOS = [
+  {
+    id: 'blancanieves',
+    titulo: 'Blancanieves',
+    autor: 'Hermanos Grimm',
+    emoji: '👸',
+    emojiSec: '🍎🪞⛏',
+    emojiTit: '❄️',
+    desc: 'Una niña de cabellos negros, piel blanca como la nieve y labios rojos como la sangre. Una madrastra muy celosa. Y siete enanos guardianes del bosque.',
+    texto: [
+      `Érase una vez una princesa tan hermosa que la llamaron Blancanieves porque su piel era blanca como la nieve recién caída. Su madrastra tenía un espejo mágico al que le preguntaba todos los días: "Espejito, espejito mágico, ¿quién es la más bella del reino?" Y el espejo siempre respondía que la más bella era la reina. Pero cuando Blancanieves creció, el espejo cambió su respuesta: ¡Blancanieves era más hermosa!`,
+      `Llena de envidia y rabia, la madrastra mandó a un cazador al bosque para que matara a la niña. Sin embargo, el cazador tuvo piedad de ella y la dejó escapar entre los árboles. Blancanieves caminó, corrió y caminó más, hasta que encontró una casita diminuta y muy ordenada, con siete camitas, siete platitos y siete vasitos en una mesa. Era la casa de siete enanos que trabajaban en las montañas cavando diamantes.`,
+      `Los enanos la recibieron con alegría y Blancanieves vivió feliz con ellos. Pero la malvada madrastra descubrió con su espejo que la niña seguía viva. Disfrazada de viejecita, llegó un día a la casita con una manzana envenenada, roja y brillante por fuera, pero mortal por dentro. Blancanieves la mordió y cayó en un sueño profundo, como si estuviera dormida para siempre.`,
+      `Los siete enanos, con el corazón partido de tristeza, la pusieron en un ataúd de cristal en el bosque. Un día, un príncipe que pasaba por allí la vio y quedó enamorado. Al inclinar el ataúd para llevarla, el trozo de manzana envenenada salió de la boca de Blancanieves. ¡La princesa despertó! Y el amor del príncipe venció para siempre el hechizo de la madrastra.`
+    ],
+    moraleja: 'La belleza del corazón siempre brilla más que la belleza del espejo. La envidia y la maldad nunca traen felicidad.',
+    personajes: ['👸 Blancanieves','🪞 La madrastra','⛏ Los siete enanos','🤴 El príncipe','🍎 La manzana envenenada']
+  },
+  {
+    id: 'cenicienta',
+    titulo: 'La Cenicienta',
+    autor: 'Charles Perrault',
+    emoji: '👠',
+    emojiSec: '🎃🧙‍♀️🤴',
+    emojiTit: '👠',
+    desc: 'Una joven bondadosa, una madrastra cruel, un hada madrina con varita mágica, un baile de príncipes y un zapato de cristal que solo le entraba a ella.',
+    texto: [
+      `Érase una vez una joven de corazón tan bueno que soportaba sin quejarse todo el trabajo de la casa que le ordenaba su malvada madrastra. Sus hermanastras la llamaban Cenicienta porque siempre estaba sentada junto a la chimenea, llena de ceniza. Aunque su ropa era pobre y sencilla, Cenicienta era cien veces más hermosa que sus hermanastras vestidas con los trajes más lujosos.`,
+      `Un día llegó la invitación al gran baile del príncipe. Las hermanastras se pusieron sus mejores vestidos y partieron muy contentas. Cenicienta, sola en casa, lloró de tristeza. De repente, apareció su hada madrina, una viejita simpática con mucho poder mágico. Con su varita transformó un zapallo enorme en un carruaje dorado, seis ratones en caballos veloces, y los vestidos de Cenicienta en un traje espléndido. Pero le advirtió: "¡Tienes que volver antes de que den las doce campanadas de medianoche!"`,
+      `En el baile, el príncipe quedó tan enamorado de Cenicienta que bailó con ella toda la noche. Pero cuando el reloj empezó a dar las doce, Cenicienta salió corriendo tan rápido que perdió uno de sus zapatitos de cristal en la escalera. El príncipe lo recogió y juró que se casaría solo con la joven a quien le entrara ese zapatito.`,
+      `Al día siguiente, el príncipe fue de casa en casa probando el zapato. Las hermanastras lo intentaron, pero no les entraba. Cuando llegó el turno de Cenicienta, el zapatito le quedó perfectamente. ¡Era ella! El príncipe la reconoció, se casaron y vivieron muy felices.`
+    ],
+    moraleja: 'La bondad y la humildad son las mejores virtudes. No importa cuántas dificultades tengas, si eres bueno y trabajador, las cosas buenas llegan.',
+    personajes: ['👧 Cenicienta','🧙‍♀️ El hada madrina','🤴 El príncipe','👠 El zapatito de cristal','👩‍👧‍👧 La madrastra']
+  },
+  {
+    id: 'bella-durmiente',
+    titulo: 'La Bella Durmiente',
+    autor: 'Hermanos Grimm',
+    emoji: '🌹',
+    emojiSec: '💤🧵🤴',
+    emojiTit: '🌹',
+    desc: 'Una princesa con un hechizo terrible, un castillo dormido entre espinas y un príncipe valiente que no teme enfrentarse a lo imposible.',
+    texto: [
+      `Érase una vez un rey y una reina que esperaban con mucha ilusión el nacimiento de su primera hija. Cuando la princesa nació, invitaron a todas las hadas del reino a una gran fiesta para que le regalaran virtudes hermosas. Pero una hada malvada, furiosa por no haber sido invitada, llegó igualmente y lanzó un hechizo espantoso: "¡Al cumplir quince años, la princesa se pinchará con una aguja y caerá muerta!"`,
+      `Afortunadamente, quedaba un hada que aún no había dado su don. Como no podía borrar el mal hechizo del todo, lo transformó: "¡No morirá, sino que dormirá cien años y un beso de amor verdadero la despertará!" El rey mandó destruir todas las agujas del reino para proteger a su hija.`,
+      `Pero el día de su decimoquinto cumpleaños, la princesa exploró sola el castillo y encontró una torre escondida donde una viejita hilaba con una aguja antigua. Curiosa, la princesa quiso tocarla y al instante se pinchó el dedo y cayó dormida. Todo el castillo se durmió con ella: el rey, la reina, los caballeros, los cocineros, los caballos y hasta las mariposas del jardín. Alrededor del castillo creció una espesísima zarza con espinas afiladas.`,
+      `Cien años después, un joven príncipe que había escuchado la leyenda se aventuró hasta el castillo. Las espinas se abrieron ante él como flores. Encontró a la princesa dormida, tan hermosa como el primer día, y la besó con ternura. La princesa abrió los ojos, todo el castillo despertó, y el amor venció el hechizo para siempre.`
+    ],
+    moraleja: 'El amor verdadero y el valor pueden vencer incluso los hechizos más poderosos. La paciencia y la esperanza siempre tienen recompensa.',
+    personajes: ['👸 La princesa','🧚 Las hadas','🤴 El príncipe valiente','🌿 La zarza espinosa','🧵 La aguja maldita']
+  },
+  {
+    id: 'hansel-gretel',
+    titulo: 'Hansel y Gretel',
+    autor: 'Hermanos Grimm',
+    emoji: '🍬',
+    emojiSec: '🏚🧙‍♀️🪨',
+    emojiTit: '🍬',
+    desc: 'Dos hermanitos perdidos en el bosque, una casita hecha de caramelos y una bruja malvada que quiere comérselos. ¡Pero los niños son más listos!',
+    texto: [
+      `Érase una vez dos hermanitos llamados Hansel y Gretel que vivían con su padre leñador y su malvada madrastra al borde de un gran bosque. Un año de mucha hambre, la madrastra convenció al padre de abandonar a los niños en el bosque para que no hubiera más bocas que alimentar. El bueno de Hansel lo escuchó todo y se preparó en secreto: llenó sus bolsillos de piedritas blancas y brillantes.`,
+      `Al día siguiente, mientras caminaban al bosque, Hansel fue dejando caer las piedras una a una. Cuando los padres los abandonaron, los niños esperaron a que saliera la luna y siguieron el rastro de piedras brillantes hasta llegar sanos y salvos a su casa. Pero la madrastra no se rindió e intentó abandonarlos de nuevo. Esta vez Hansel solo pudo usar migas de pan, que los pájaros del bosque se comieron todas, y los niños se perdieron de verdad.`,
+      `Caminaron por el bosque durante días hasta que encontraron algo increíble: ¡una casita hecha de pan, caramelos y azúcar! Hambrientos, empezaron a comérsela. Pero la dueña era una bruja que atrapó a Hansel para engordarlo y comérselo, y puso a Gretel a trabajar de sirvienta.`,
+      `Gretel era valiente e inteligente. Cuando la bruja abrió el horno para meter a Hansel, Gretel la empujó adentro, liberó a su hermano y escaparon del bosque cargando el tesoro de la bruja. Así volvieron con su padre, que los recibió llorando de alegría, y vivieron muy felices.`
+    ],
+    moraleja: 'La inteligencia y el coraje de los más jóvenes pueden superar los peligros más grandes. Los hermanos que se cuidan mutuamente siempre salen adelante.',
+    personajes: ['👦 Hansel','👧 Gretel','🏚 La casita de dulces','🧙‍♀️ La bruja malvada','🪨 Las piedritas blancas']
+  },
+  {
+    id: 'patito-feo',
+    titulo: 'El Patito Feo',
+    autor: 'Hans Christian Andersen',
+    emoji: '🦆',
+    emojiSec: '🦢❄️🌸',
+    emojiTit: '🦆',
+    desc: 'Un patito diferente a todos, rechazado y solitario, que descubre que lo que lo hacía diferente era en realidad su mayor tesoro.',
+    texto: [
+      `Era verano cuando una mamá pata vio que sus huevos comenzaban a abrirse uno a uno. De cada huevo salió un patito amarillo y esponjoso, lleno de vida. Pero el último huevo, el más grande de todos, tardó mucho más en abrirse. Y cuando por fin lo hizo, salió un patito completamente diferente: gris, torpón y más grande que sus hermanos. "¡Qué feo es!" dijeron todos.`,
+      `El patito gris fue rechazado por todos los animales del corral. Sus propios hermanos lo picoteaban, los gansos no querían jugar con él y hasta la gallina vieja se burlaba. Triste y solo, el patito decidió escapar a un lago lejano. Pero allí tampoco encontró amigos. Llegó el frío invierno y el patito pasó meses congelándose y escondido entre los juncos, sin un amigo en el mundo.`,
+      `Por fin llegó la primavera y el patito sintió que su cuerpo había cambiado. Sus alas eran más grandes y fuertes. Miró su reflejo en el agua del lago y no reconoció lo que vio: ¡no era un pato feo, sino un hermoso cisne de plumas blancas como la nieve! Tres cisnes elegantes se acercaron nadando y lo saludaron como a uno de ellos.`,
+      `Los niños que jugaban junto al lago señalaron maravillados: "¡Miren ese cisne, es el más hermoso de todos!" Y el patito feo, ahora cisne espléndido, por fin sintió que pertenecía a algún lugar y que había valido la pena esperar.`
+    ],
+    moraleja: 'Nunca debemos burlarnos de quien es diferente. Cada uno tiene su propio tiempo para florecer y descubrir quién es de verdad. Las burlas lastiman mucho.',
+    personajes: ['🐥 El patito diferente','🦢 Los cisnes','🦆 Los otros patos','❄️ El frío invierno']
+  },
+  {
+    id: 'gato-botas',
+    titulo: 'El Gato con Botas',
+    autor: 'Charles Perrault',
+    emoji: '🐱',
+    emojiSec: '🥾👑🏰',
+    emojiTit: '🥾',
+    desc: 'Un gato muy listo con botas y sombrero que usa todo su ingenio para convertir a su amo pobre en el hombre más importante del reino.',
+    texto: [
+      `Cuando un viejo molinero murió, dejó a sus tres hijos todo lo que tenía: al mayor le dejó el molino, al del medio el burro, y al menor... solo un gato. El joven estaba muy triste pensando que se moriría de hambre con tan poca herencia. Pero el gato era especial: le pidió a su amo unas botas y una bolsa, y prometió que con eso cambiaría su vida.`,
+      `El gato se calzó sus botas elegantes, se puso un sombrero con una pluma y se fue al bosque a cazar conejos y perdices, que luego llevaba al rey como regalos de "el marqués de Carabás", que era el nombre inventado por el gato para su humilde amo. El rey recibía los regalos con mucha alegría y el nombre del marqués se hizo famoso en todo el reino.`,
+      `Un día el gato se enteró de que el rey pasearía con su hija por el río. Le ordenó a su amo que se bañara justo allí y después gritó: "¡Socorro! ¡El marqués de Carabás se ahoga!" El rey lo rescató, le prestó ropa elegantísima de su guardarropa real, y el joven quedó tan apuesto que la princesa se enamoró de él al instante.`,
+      `Con más trucos y astucia, el gato convirtió a su amo en dueño de un castillo enorme. El rey, impresionado, le ofreció la mano de su hija. Y así, gracias a la inteligencia y la lealtad de un gato con botas, el hijo más pobre del molinero se convirtió en príncipe.`
+    ],
+    moraleja: 'La inteligencia y la creatividad valen más que las riquezas heredadas. Un buen amigo leal que usa su ingenio puede cambiar todo.',
+    personajes: ['🐱 El gato astuto','👨‍🌾 El joven amo','👑 El rey','👸 La princesa','🥾 Las botas mágicas'],
+    images: {
+      0: `<div class="cuento-imagenes"><img src="gatoconbotas1.jpg" onclick="openLightbox(this)"></div>`,
+      1: `<div class="cuento-imagenes"><img src="gatoconbotas2.jpg" onclick="openLightbox(this)"></div>`,
+      2: `<div class="cuento-imagenes"><img src="gatoconbotas3.jpg" onclick="openLightbox(this)"></div>`,
+      3: `<div class="cuento-imagenes"><img src="gatoconbotas4.jpg" onclick="openLightbox(this)"></div>`
+    }
+  },
+  {
+    id: 'pulgarcito',
+    titulo: 'Pulgarcito',
+    autor: 'Charles Perrault',
+    emoji: '👦',
+    emojiSec: '👣🌿🥾',
+    emojiTit: '🌿',
+    desc: 'El más pequeño de siete hermanos, no más grande que un pulgar, que demuestra que el tamaño no importa cuando uno tiene mucho ingenio y valentía.',
+    texto: [
+      `Érase una vez un leñador y su esposa que tenían siete hijos. El más pequeño era tan chiquitito cuando nació que cabía en la palma de una mano, por eso lo llamaron Pulgarcito. Aunque era el más pequeño, era el más inteligente y observador de todos sus hermanos. Cuando nadie lo miraba, Pulgarcito escuchaba y pensaba mucho.`,
+      `Un año de mucha hambre, los padres decidieron con el corazón roto llevar a los niños al bosque y abandonarlos allí. Pulgarcito lo escuchó todo en secreto. A la mañana siguiente, sin que nadie lo notara, llenó sus bolsillos de piedritas blancas. Mientras caminaban al bosque, fue dejando caer una piedrita en cada cruce del camino. Cuando los padres los abandonaron, Pulgarcito esperó a que saliera la luna y guió a sus hermanos de regreso a casa siguiendo el rastro de piedritas brillantes.`,
+      `La segunda vez que los padres los dejaron en el bosque, Pulgarcito solo tenía migas de pan. Los pájaros se las comieron todas y los niños se perdieron de verdad. Caminando y caminando llegaron a la casa de un terrible ogro que comía niños. Con mucha astucia, Pulgarcito confundió al ogro y escapó junto a sus hermanos calzando las botas mágicas del ogro, con las que podía dar pasos gigantes.`,
+      `Con esas botas, Pulgarcito recorrió el mundo, hizo fortuna y regresó a rescatar a su familia de la pobreza. Así, el hijo más pequeño se convirtió en el más valioso de todos.`
+    ],
+    moraleja: 'El tamaño no define la valentía. Con inteligencia, observación y coraje, hasta el más pequeño puede lograr cosas extraordinarias.',
+    personajes: ['🧒 Pulgarcito','👦👦👦 Los seis hermanos','👹 El ogro','🥾 Las botas de siete leguas','🪨 Las piedritas']
+  },
+  {
+    id: 'barba-azul',
+    titulo: 'Barba Azul',
+    autor: 'Charles Perrault',
+    emoji: '🗝️',
+    emojiSec: '🚪⚔️😰',
+    emojiTit: '🔑',
+    desc: 'Un hombre misterioso con una barba azul, un castillo lleno de secretos, una llave prohibida y dos hermanos que llegan justo a tiempo.',
+    texto: [
+      `Érase una vez un hombre muy rico pero con una barba de color azul tan extraña que daba miedo. Nadie quería casarse con él. Pero después de invitar a sus vecinos a fiestas muy divertidas en su castillo, la hija más joven de una dama noble aceptó casarse con él y fue a vivir a su hermosa mansión.`,
+      `Un día, Barba Azul le entregó a su esposa el manojo de todas las llaves del castillo y le dijo: "Puedes entrar a todos los cuartos menos a uno: el del final del pasillo. Esa habitación está prohibida." Pero la curiosidad de la joven esposa pudo más que la prudencia. Mientras su marido estaba de viaje, tomó la llavecita prohibida y abrió esa puerta.`,
+      `Lo que encontró adentro la llenó de horror y de miedo. La llave, que era mágica, quedó manchada de sangre y la esposa no pudo limpiarla por más que lo intentó. Cuando Barba Azul regresó y vio la mancha en la llave, supo que su esposa había desobedecido y se puso furioso.`,
+      `La joven, muy asustada, rogó que le dieran unos minutos para rezar. Era en realidad una señal secreta para llamar a sus dos hermanos, que llegaron a galope tendido, empuñando sus espadas. Así salvaron a su hermana del terrible Barba Azul.`
+    ],
+    moraleja: 'La curiosidad sin límites puede meternos en problemas. Hay que escuchar las advertencias de quienes nos cuidan. Y si estamos en peligro, hay que pedir ayuda sin dudar.',
+    personajes: ['💙 Barba Azul','👩 La joven esposa','⚔️ Los hermanos','🗝 La llave prohibida']
+  },
+  {
+    id: 'caperucita-grimm',
+    titulo: 'Caperucita Roja',
+    autor: 'Hermanos Grimm',
+    emoji: '🌲',
+    emojiSec: '🐺🌸🪓',
+    emojiTit: '🌲',
+    desc: 'La misma historia de siempre, pero contada por los hermanos Grimm: con un lobo más astuto, flores más coloridas y un cazador que lo arregla todo al final.',
+    texto: [
+      `Érase una vez una niñita dulce y alegre a quien todo el mundo quería. Su abuelita le había regalado una caperuza de terciopelo rojo que le quedaba tan bien que todos la llamaban Caperucita Roja. Un buen día, su mamá le preparó una canasta con torta y una botella de vino para llevar a la abuelita que estaba enferma, y le dio un consejo muy importante: "¡No te apartes del camino!"`,
+      `En el bosque, Caperucita se encontró con el lobo. El lobo, muy astuto, le habló con amabilidad y la convenció de detenerse a recoger flores para alegrar a su abuelita. "¡Qué lindas flores hay por aquí!" pensó la niña. Y mientras ella recogía ramos coloridos, el lobo corrió directamente a la casa de la abuelita, se la comió y se disfrazó con su ropa.`,
+      `Cuando Caperucita llegó y entró al cuarto, notó que su "abuelita" tenía orejas enormes, ojos brillantes y una boca muy grande. "¡Para comerte mejor!", rugió el lobo, y se abalanzó sobre ella. En ese momento pasaba un cazador que oyó el alboroto. Entró de un golpe, venció al lobo y rescató a la abuelita y a Caperucita sanas y salvas.`,
+      `Caperucita aprendió la lección más importante de su vida: seguir los consejos de su mamá y no confiar en desconocidos, por más amables que parezcan.`
+    ],
+    moraleja: 'Hay que escuchar los consejos de quienes nos quieren y no apartarse del camino seguro. Las personas desconocidas, aunque sean muy amables, pueden tener malas intenciones.',
+    personajes: ['🧣 Caperucita Roja','🐺 El lobo astuto','👵 La abuelita','🌸 Las flores del bosque','🪓 El cazador'],
+    images: {
+      0: `<div class="cuento-imagenes"><img src="caperucita1.jpg" onclick="openLightbox(this)"></div>`,
+      1: `<div class="cuento-imagenes"><img src="caperucita2.jpg" onclick="openLightbox(this)"></div>`,
+      2: `<div class="cuento-imagenes"><img src="caperucita3.jpg" onclick="openLightbox(this)"></div>`,
+    }
+  }
+];
+
+// Orden de navegación
+const ORDER = CUENTOS.map(c => c.id);
+
+// Construir vistas
+const container = document.getElementById('cuentosContainer');
+CUENTOS.forEach(c => {
+  const div = document.createElement('div');
+  div.className = 'cuento-view';
+  div.id = 'view-' + c.id;
+
+  const parrafos = c.texto.map((p, i) => {
+    let html = `<p${i === 0 ? ' class="letra-capital"' : ''}>${p}</p>`;
+    if (c.images && c.images[i]) {
+      html += c.images[i];
+    }
+    return html;
+  }).join('');
+
+  const tags = c.personajes.map(p => `<span class="personaje-tag">${p}</span>`).join('');
+
+  div.innerHTML = `
+    <div class="cuento-hero">
+      <div class="cuento-hero-imagen">
+        <div class="emoji-panel">
+          <div class="emoji-grande">${c.emoji}</div>
+          <div class="emoji-sec">${[...c.emojiSec].join(' ')}</div>
+        </div>
+      </div>
+      <div class="cuento-hero-info">
+        <span class="etiqueta-autor">${c.autor}</span>
+        <h2>${c.emojiTit} ${c.titulo}</h2>
+        <p class="mini-descripcion">${c.desc}</p>
+      </div>
+    </div>
+    <div class="cuento-cuerpo">
+      ${parrafos}
+      <div class="moraleja"><strong>✨ Lo que aprendemos</strong>${c.moraleja}</div>
+      <div class="personajes">${tags}</div>
+    </div>
+    <div class="cuento-nav-btns">
+      <button class="nav-btn prev" data-id="${c.id}">← Anterior</button>
+      <button class="nav-btn next" data-id="${c.id}">Siguiente →</button>
+    </div>
+  `;
+  container.appendChild(div);
+});
+
+// Mini chips de bienvenida
+const miniGrid = document.getElementById('miniGrid');
+CUENTOS.forEach(c => {
+  const chip = document.createElement('span');
+  chip.className = 'mini-chip';
+  chip.textContent = c.emoji + ' ' + c.titulo;
+  chip.addEventListener('click', () => mostrarCuento(c.id));
+  miniGrid.appendChild(chip);
+});
+
+let currentId = null;
+
+function mostrarCuento(id) {
+  // Ocultar bienvenida
+  document.getElementById('bienvenida').style.display = 'none';
+
+  // Ocultar vista anterior
+  if (currentId) {
+    document.getElementById('view-' + currentId).classList.remove('visible');
+  }
+
+  currentId = id;
+
+  // Mostrar nueva vista
+  const view = document.getElementById('view-' + id);
+  view.classList.add('visible');
+
+  // Scroll al tope del panel
+  document.getElementById('panel').scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Actualizar nav sidebar
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === id);
+  });
+
+  // Actualizar botones prev/next
+  const idx = ORDER.indexOf(id);
+  const prevBtn = view.querySelector('.nav-btn.prev');
+  const nextBtn = view.querySelector('.nav-btn.next');
+
+  if (idx === 0) {
+    prevBtn.disabled = true;
+    prevBtn.style.visibility = 'hidden';
+  } else {
+    prevBtn.disabled = false;
+    prevBtn.style.visibility = 'visible';
+    const prevCuento = CUENTOS.find(c => c.id === ORDER[idx - 1]);
+    prevBtn.textContent = '← ' + prevCuento.emoji + ' ' + prevCuento.titulo;
+  }
+
+  if (idx === ORDER.length - 1) {
+    nextBtn.disabled = true;
+    nextBtn.style.visibility = 'hidden';
+  } else {
+    nextBtn.disabled = false;
+    nextBtn.style.visibility = 'visible';
+    const nextCuento = CUENTOS.find(c => c.id === ORDER[idx + 1]);
+    nextBtn.textContent = nextCuento.emoji + ' ' + nextCuento.titulo + ' →';
+  }
+
+  // Cerrar sidebar en mobile
+  closeSidebar();
+}
+
+// Eventos sidebar
+document.querySelectorAll('.nav-item').forEach(el => {
+  el.addEventListener('click', () => mostrarCuento(el.dataset.id));
+});
+
+// Eventos prev/next (delegado)
+document.getElementById('cuentosContainer').addEventListener('click', e => {
+  const btn = e.target.closest('.nav-btn');
+  if (!btn) return;
+  const id = btn.dataset.id;
+  const idx = ORDER.indexOf(id);
+  if (btn.classList.contains('prev') && idx > 0) mostrarCuento(ORDER[idx - 1]);
+  if (btn.classList.contains('next') && idx < ORDER.length - 1) mostrarCuento(ORDER[idx + 1]);
+});
+
+// Mobile sidebar toggle
+const btnMenu = document.getElementById('btnMenu');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+}
+
+btnMenu.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('open');
+});
+overlay.addEventListener('click', closeSidebar);
+</script>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="" alt="Imagen ampliada">
+</div>
+<script>
+function openLightbox(img) {
+  document.getElementById('lightboxImg').src = img.src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox(); });
+</script>
+</body>
+</html>
